@@ -1,53 +1,31 @@
 package com.example.PayRole.Service;
 
-
 import com.example.PayRole.Model.Employee;
+import com.example.PayRole.Repository.EmployeeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class EmployeeService {
-    private List<Employee> employeeList = new ArrayList<>();
-    private int ID_Counter = 1;
 
+    @Autowired
+    private EmployeeRepository repository;
 
-    //Get All the Employees
-    public List<Employee> getAllEmployees(){
-        return employeeList;
+    public List<Employee> getAllEmployees() {
+        return repository.findAll();
     }
 
-    //get employee Based on the ID
-    public Employee getEmployeeID(int ID){
-        return employeeList.stream().filter(employee -> employee.getId() == ID).findFirst().orElse(null);
+    public Optional<Employee> getEmployeeById(Long id) {
+        return repository.findById(id);
     }
 
-    //Adding the Employees !!!
-    public Employee addEmployee(Employee employee){
-        employee.setId(ID_Counter++);
-        employeeList.add(employee);
-        return employee;
+    public Employee saveEmployee(Employee employee) {
+        return repository.save(employee);
     }
 
-    //Delete the Employee
-    public boolean deleteEmployee(int id){
-        return employeeList.removeIf(employee -> employee.getId() == id);
+    public void deleteEmployee(Long id) {
+        repository.deleteById(id);
     }
-
-    //Update the Employee Field
-    public Employee updateEmployee(int id ,Employee employee){
-        Optional<Employee> employeeExists = employeeList.stream().filter(employee1 -> employee.getId() == id).findFirst();
-
-        if (employeeExists.isPresent()){
-            Employee existingEmployee = employeeExists.get();
-            existingEmployee.setName(employee.getName());
-            existingEmployee.setSalary(employee.getSalary());
-            return existingEmployee;
-        }
-
-        return null;
-    }
-
 }
